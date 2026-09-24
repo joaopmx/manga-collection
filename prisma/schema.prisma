@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum LibraryStatus {
+  WANT_TO_READ
+  READING
+  READ
+  DROPPED
+}
+
+model User {
+  id             String          @id @default(cuid())
+  name           String
+  email          String          @unique
+  passwordHash   String
+  bio            String?
+  avatar         String?
+  createdAt      DateTime        @default(now())
+  libraryEntries LibraryEntry[]
+  comments       MangaComment[]
+}
+
+model Manga {
+  id             String          @id @default(cuid())
+  anilistId      Int             @unique
+  title          String
+  titleEnglish   String?
+  synopsis       String?
+  synopsisPt     String?
+  coverImage     String?
+  authors        String?
+  genres         String?
+  volumesCount   Int?
+  volumesEstimated Boolean       @default(false)
+  volumesCheckedAt DateTime?
+  mangaUpdatesId String?
+  startYear      Int?
+  chaptersCount  Int?
+  publishStatus  String?
+  score          Float?
+  createdAt      DateTime        @default(now())
+  libraryEntries LibraryEntry[]
+  comments       MangaComment[]
+}
+
+model LibraryEntry {
+  id        String        @id @default(cuid())
+  userId    String
+  mangaId   String
+  status    LibraryStatus
+  rating    Float?
+  currentVolume Int?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  manga     Manga         @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mangaId])
+}
+
+model MangaComment {
+  id        String   @id @default(cuid())
+  userId    String
+  mangaId   String
+  content   String
+  spoiler   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  manga     Manga    @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+
+  @@index([mangaId, createdAt])
+}

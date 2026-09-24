@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    path { stroke: #8a3324; }
+    .fill { fill: #8a3324; stroke: none; }
+    @media (prefers-color-scheme: dark) {
+      path { stroke: #e0ab6c; }
+      .fill { fill: #e0ab6c; }
+    }
+  </style>
+  <path
+    d="M32,14 C22,9 12,10 9,13 L9,46 C12,43 22,42 32,47 C42,42 52,43 55,46 L55,13 C52,10 42,9 32,14 Z"
+    stroke-width="2.75"
+    stroke-linejoin="round"
+  />
+  <path d="M32,14 L32,47" stroke-width="2" />
+  <path class="fill" d="M27,9 L27,24 L32,20 L37,24 L37,9 Z" />
+  <path d="M46,8 L55,0 M50,13 L59,6" stroke-width="2.2" stroke-linecap="round" />
+</svg>

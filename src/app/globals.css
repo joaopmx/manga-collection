@@ -1,26 +1,177 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3e7d2;
+  --foreground: #2c2013;
+  --accent: #8a3324;
+  --accent-hover: #6f2a1d;
+  --accent-foreground: #fdf6ea;
+  --card: #fffaf0;
+  --card-border: #d9c3a0;
+  --muted: #6b5842;
+  --shelf-wood: #a9743c;
+  --shelf-wood-dark: #7c5228;
+  /* Text sitting directly on the wood-toned navbar/header — always a light
+     cream regardless of theme, since the wood panel is dark-ish in both
+     modes. Distinct from --accent-foreground, which contrasts against the
+     accent color itself and flips between themes (dark red vs. light gold). */
+  --nav-foreground: #fdf6ea;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-nav-foreground: var(--nav-foreground);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-shelf-wood: var(--shelf-wood);
+  --color-shelf-wood-dark: var(--shelf-wood-dark);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-display);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --background: #1b140d;
+    --foreground: #ecdfc8;
+    --accent: #cf9a4c;
+    --accent-hover: #e0ab6c;
+    --accent-foreground: #1b140d;
+    --card: #241b12;
+    --card-border: #3d2f20;
+    --muted: #b9a685;
+    --shelf-wood: #4a3420;
+    --shelf-wood-dark: #2e2013;
   }
+}
+
+:root[data-theme="dark"] {
+  --background: #1b140d;
+  --foreground: #ecdfc8;
+  --accent: #cf9a4c;
+  --accent-hover: #e0ab6c;
+  --accent-foreground: #1b140d;
+  --card: #241b12;
+  --card-border: #3d2f20;
+  --muted: #b9a685;
+  --shelf-wood: #4a3420;
+  --shelf-wood-dark: #2e2013;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+}
+
+/* --- Bookshelf motifs --- */
+
+.wood-panel {
+  background-color: var(--shelf-wood);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.08) 0px,
+      rgba(0, 0, 0, 0.08) 2px,
+      transparent 2px,
+      transparent 90px
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.12));
+}
+
+.shelf-grid {
+  background-color: color-mix(in srgb, var(--shelf-wood) 20%, var(--background));
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--shelf-wood) 12%, transparent),
+    transparent 20%
+  );
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.book-card {
+  position: relative;
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 10px 14px -8px rgba(0, 0, 0, 0.45),
+    0 2px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.book-cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 3px 10px 10px 3px;
+}
+
+.book-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 7px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.45),
+    rgba(255, 255, 255, 0.12) 40%,
+    rgba(0, 0, 0, 0.25)
+  );
+  border-radius: 3px 0 0 3px;
+  z-index: 1;
+}
+
+.book-card::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  bottom: -10px;
+  height: 10px;
+  background: linear-gradient(180deg, var(--shelf-wood), var(--shelf-wood-dark));
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.35);
+  border-radius: 0 0 2px 2px;
+}
+
+.book-card:hover {
+  transform: translateY(-6px) rotate(-1deg);
+  box-shadow:
+    0 18px 22px -10px rgba(0, 0, 0, 0.5),
+    0 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Horizontal shelf: every direct child is one snapping slide. The vertical
+   padding leaves room for the book hover lift and the wooden plank below. */
+.carousel-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0.75rem 0.25rem 0.5rem;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-track > * {
+  flex: 0 0 8.5rem;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+  .carousel-track > * {
+    flex-basis: 9.5rem;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
 }
