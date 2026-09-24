@@ -5,7 +5,7 @@ Biblioteca pessoal de mangás: busque títulos (via API pública AniList), adici
 ## Stack
 
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
-- [Prisma](https://www.prisma.io) + SQLite (banco local em arquivo)
+- [Prisma](https://www.prisma.io) + PostgreSQL (hospedado no [Neon](https://neon.tech))
 - [NextAuth.js](https://authjs.dev) (v5) para autenticação multiusuário (email/senha)
 - [AniList API](https://anilist.co/graphiql) (GraphQL) para dados de mangás
 - Tailwind CSS
@@ -18,14 +18,15 @@ Biblioteca pessoal de mangás: busque títulos (via API pública AniList), adici
    npm install
    ```
 
-2. Configure as variáveis de ambiente copiando o modelo e definindo um `AUTH_SECRET` próprio (o `.env` não é versionado):
+2. Crie um banco PostgreSQL gratuito (por exemplo no [Neon](https://neon.tech); para desenvolvimento, use um branch separado do de produção) e configure as variáveis de ambiente copiando o modelo (o `.env` não é versionado):
 
    ```bash
    cp .env.example .env
    ```
 
    ```
-   DATABASE_URL="file:./dev.db"
+   DATABASE_URL="<connection string pooled>"
+   DATABASE_URL_UNPOOLED="<connection string direct>"
    AUTH_SECRET="<uma string aleatória, ex.: gerada com npx auth secret>"
    ```
 
@@ -42,6 +43,14 @@ Biblioteca pessoal de mangás: busque títulos (via API pública AniList), adici
    ```
 
 5. Acesse [http://localhost:3000](http://localhost:3000).
+
+## Deploy (Vercel + Neon)
+
+O app precisa de servidor e banco, então não roda no GitHub Pages. Para publicá-lo na [Vercel](https://vercel.com):
+
+1. Importe este repositório na Vercel (framework Next.js, detectado automaticamente).
+2. Em **Environment Variables**, defina `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED` (direct) e `AUTH_SECRET`, usando o branch de **produção** do Neon.
+3. O script `vercel-build` aplica as migrações (`prisma migrate deploy`) antes de compilar.
 
 ## Funcionalidades
 
